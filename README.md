@@ -39,7 +39,4 @@ mvn test
 
 # Run specific test class
 mvn test -Dtest=CarRentalServiceTest
-
-# Run with coverage
-mvn test jacoco:report
 ```
