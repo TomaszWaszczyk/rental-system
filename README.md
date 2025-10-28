@@ -40,3 +40,9 @@ mvn test
 # Run specific test class
 mvn test -Dtest=CarRentalServiceTest
 ```
+
+## Gaps/deficiencies should be known & understood
+
+- Add exceptions handling
+- Better ID generation
+- Add logger
