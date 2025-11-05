@@ -48,8 +48,7 @@ public class CarRentalService {
         
         // Create reservation
         String reservationId = "RES-" + System.currentTimeMillis();
-        Reservation reservation = new Reservation(
-            reservationId, customerId, carType, startDate, days);
+        Reservation reservation = new Reservation(reservationId, customerId, carType, startDate, days);
         
         reservations.add(reservation);
         availableCounts.put(carType, availableCounts.get(carType) - 1);

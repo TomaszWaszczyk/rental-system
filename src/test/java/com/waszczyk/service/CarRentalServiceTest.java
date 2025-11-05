@@ -108,4 +108,44 @@ class CarRentalServiceTest {
         assertNull(service.makeReservation("CUST001", CarType.SEDAN, tomorrow, 0));
         assertNull(service.makeReservation("CUST001", CarType.SEDAN, tomorrow, -1));
     }
+
+    @Test
+    @DisplayName("Demonstrates the whole flow of rental system")
+    void testRentalFlow() {
+        
+        // Use exactly 1 SUV 
+        assertEquals(1, service.getTotalCount(CarType.SUV));
+        assertEquals(1, service.getAvailableCount(CarType.SUV));
+        
+        // Step 1: Customer A books SUV for Dec 10-17 (8 days)
+        String resA = service.makeReservation("customerA", CarType.SUV, LocalDate.of(2025, 12, 10), 8);
+        assertNotNull(resA, "Customer A should get the SUV");
+        assertEquals(0, service.getAvailableCount(CarType.SUV), "No SUVs left");
+
+        // Step 2: Customer B tries to book overlapping dates Dec 14-20 - correctly fails
+        String resB = service.makeReservation("customerB", CarType.SUV, LocalDate.of(2025, 12, 14), 7);
+        assertNull(resB, "Customer B correctly rejected - no SUVs available");
+
+        // Step 3: Customer A cancels their reservation
+        boolean cancelled = service.cancelReservation(resA);
+        assertTrue(cancelled, "Customer A's cancellation should work");
+        assertEquals(1, service.getAvailableCount(CarType.SUV), "SUV is available again");
+
+        // Step 4: Customer B books for Dec 14-20 (succeeds because count = 1)
+        String resB2 = service.makeReservation("customerB", CarType.SUV, LocalDate.of(2025, 12, 14), 7);
+        assertNotNull(resB2, "Customer B should succeed now");
+        assertEquals(0, service.getAvailableCount(CarType.SUV), "No SUVs left again");
+
+        // Step 5: Customer A tries to rebook their original dates Dec 10-17
+        // Current system correctly rejects this (availableCount = 0)
+        String resA2 = service.makeReservation("customerA", CarType.SUV, LocalDate.of(2025, 12, 10), 8);
+        assertNull(resA2, "Customer A correctly rejected - no SUVs available");
+        
+        System.out.println("Counting approach has limitations:");
+        System.out.println("1. No way to check availability for specific date ranges");
+        System.out.println("2. Vulnerable to race conditions in multi-threaded environment");
+        System.out.println("SOLUTION NEEDED:");
+        System.out.println("Implement date-range availability checking instead of simple counting");
+        System.out.println("Example: isAvailableForDateRange(CarType.SUV, Dec5, 4) -> boolean");
+    }
 }
