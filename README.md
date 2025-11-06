@@ -41,6 +41,8 @@ mvn test
 mvn test -Dtest=CarRentalServiceTest
 ```
 
+![Demo](resources/rental-system.gif)
+
 ## Gaps/deficiencies should be known & understood
 
 - Add exceptions handling
