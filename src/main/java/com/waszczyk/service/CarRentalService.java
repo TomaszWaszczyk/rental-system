@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.waszczyk.model.CarType;
 import com.waszczyk.model.Reservation;
@@ -89,12 +90,8 @@ public class CarRentalService {
      * Get reservations for a customer.
      */
     public List<Reservation> getCustomerReservations(String customerId) {
-        List<Reservation> result = new ArrayList<>();
-        for (Reservation reservation : reservations) {
-            if (reservation.getCustomerId().equals(customerId)) {
-                result.add(reservation);
-            }
-        }
-        return result;
+        return reservations.stream()
+            .filter(reservation -> reservation.getCustomerId().equals(customerId))
+            .collect(Collectors.toList());
     }
 }
