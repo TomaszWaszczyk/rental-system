@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.waszczyk.exception.NoCarAvailableException;
 import com.waszczyk.model.CarType;
 import com.waszczyk.model.Reservation;
 
@@ -35,8 +36,9 @@ public class CarRentalService {
     
     /**
      * Make a reservation - returns reservation ID if successful, null if failed.
+     * @throws NoCarAvailableException 
      */
-    public String makeReservation(String customerId, CarType carType, LocalDate startDate, int days) {
+    public String makeReservation(String customerId, CarType carType, LocalDate startDate, int days) throws NoCarAvailableException {
         // As simple validation as possible
         if (customerId == null || customerId.trim().isEmpty()) return null;
         if (carType == null || startDate == null || days <= 0) return null;
@@ -44,7 +46,7 @@ public class CarRentalService {
         
         // Check if any cars are available
         if (availableCounts.get(carType) <= 0) {
-            return null; // No cars available
+            throw new NoCarAvailableException("No cars available for type:" + carType);
         }
         
         // Create reservation

@@ -2,6 +2,7 @@ package com.waszczyk;
 
 import java.time.LocalDate;
 
+import com.waszczyk.exception.NoCarAvailableException;
 import com.waszczyk.model.CarType;
 import com.waszczyk.service.CarRentalService;
 
@@ -37,11 +38,14 @@ public class Main {
         // Test limits
         System.out.println("Testing car limits...");
         service.makeReservation("CUST003", CarType.VAN, tomorrow, 2);
-        String failedRes = service.makeReservation("CUST004", CarType.VAN, tomorrow, 2); // Should fail
-        
-        if (failedRes == null) {
+        try {
+        	service.makeReservation("CUST004", CarType.VAN, tomorrow, 2); // Should fail
+        } catch (NoCarAvailableException e) {
             System.out.println("Van reservation correctly rejected - no more vans available");
+
         }
+//        if (failedRes == null) {
+//        }
         
         // Show availability
         System.out.println("Current availability:");

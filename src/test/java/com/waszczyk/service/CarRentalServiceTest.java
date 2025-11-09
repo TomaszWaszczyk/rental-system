@@ -6,11 +6,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.waszczyk.exception.NoCarAvailableException;
 import com.waszczyk.model.CarType;
 import com.waszczyk.model.Reservation;
 
@@ -51,15 +53,17 @@ class CarRentalServiceTest {
     
     @Test
     @DisplayName("Should enforce limited number of cars")
-    void testCarLimits() {
+    void testCarLimits() throws NoCarAvailableException {
         // Reserve all SUVs (only 1 available)
         String res1 = service.makeReservation("CUST001", CarType.SUV, tomorrow, 3);
         assertNotNull(res1);
         assertEquals(0, service.getAvailableCount(CarType.SUV));
         
-        // Try to reserve another SUV - should fail
-        String res2 = service.makeReservation("CUST002", CarType.SUV, tomorrow, 3);
-        assertNull(res2);
+        // Try to reserve another SUV - should throw exception
+        NoCarAvailableException exception = assertThrows(NoCarAvailableException.class, () -> {
+            service.makeReservation("CUST002", CarType.SUV, tomorrow, 3);
+        });
+        assertNotNull(exception);
     }
     
     @Test
@@ -111,7 +115,7 @@ class CarRentalServiceTest {
 
     @Test
     @DisplayName("Demonstrates the whole flow of rental system")
-    void testRentalFlow() {
+    void testRentalFlow() throws NoCarAvailableException {
         
         // Use exactly 1 SUV 
         assertEquals(1, service.getTotalCount(CarType.SUV));
@@ -122,9 +126,11 @@ class CarRentalServiceTest {
         assertNotNull(resA, "Customer A should get the SUV");
         assertEquals(0, service.getAvailableCount(CarType.SUV), "No SUVs left");
 
-        // Step 2: Customer B tries to book overlapping dates Dec 14-20 - correctly fails
-        String resB = service.makeReservation("customerB", CarType.SUV, LocalDate.of(2025, 12, 14), 7);
-        assertNull(resB, "Customer B correctly rejected - no SUVs available");
+        // Step 2: Customer B tries to book overlapping dates Dec 14-20 - should throw exception
+        NoCarAvailableException exception2 = assertThrows(NoCarAvailableException.class, () -> {
+            service.makeReservation("customerB", CarType.SUV, LocalDate.of(2025, 12, 14), 7);
+        });
+        assertNotNull(exception2);
 
         // Step 3: Customer A cancels their reservation
         boolean cancelled = service.cancelReservation(resA);
@@ -136,10 +142,11 @@ class CarRentalServiceTest {
         assertNotNull(resB2, "Customer B should succeed now");
         assertEquals(0, service.getAvailableCount(CarType.SUV), "No SUVs left again");
 
-        // Step 5: Customer A tries to rebook their original dates Dec 10-17
-        // Current system correctly rejects this (availableCount = 0)
-        String resA2 = service.makeReservation("customerA", CarType.SUV, LocalDate.of(2025, 12, 10), 8);
-        assertNull(resA2, "Customer A correctly rejected - no SUVs available");
+        // Step 5: Customer A tries to rebook their original dates Dec 10-17 - should throw exception
+        NoCarAvailableException exception = assertThrows(NoCarAvailableException.class, () -> {
+            service.makeReservation("customerA", CarType.SUV, LocalDate.of(2025, 12, 10), 8);
+        });
+        assertNotNull(exception);
         
         System.out.println("Counting approach has limitations:");
         System.out.println("1. No way to check availability for specific date ranges");
