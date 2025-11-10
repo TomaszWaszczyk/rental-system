@@ -44,8 +44,6 @@ public class Main {
             System.out.println("Van reservation correctly rejected - no more vans available");
 
         }
-//        if (failedRes == null) {
-//        }
         
         // Show availability
         System.out.println("Current availability:");
