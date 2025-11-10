@@ -53,7 +53,7 @@ class CarRentalServiceTest {
     
     @Test
     @DisplayName("Should enforce limited number of cars")
-    void testCarLimits() throws NoCarAvailableException {
+    void testCarLimits() {
         // Reserve all SUVs (only 1 available)
         String res1 = service.makeReservation("CUST001", CarType.SUV, tomorrow, 3);
         assertNotNull(res1);
@@ -115,7 +115,7 @@ class CarRentalServiceTest {
 
     @Test
     @DisplayName("Demonstrates the whole flow of rental system")
-    void testRentalFlow() throws NoCarAvailableException {
+    void testRentalFlow() {
         
         // Use exactly 1 SUV 
         assertEquals(1, service.getTotalCount(CarType.SUV));

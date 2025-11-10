@@ -37,7 +37,7 @@ public class CarRentalService {
      * Make a reservation - returns reservation ID if successful.
      * @throws NoCarAvailableException 
      */
-    public String makeReservation(String customerId, CarType carType, LocalDate startDate, int days) throws NoCarAvailableException {
+    public String makeReservation(String customerId, CarType carType, LocalDate startDate, int days) {
         // As simple validation as possible
         if (customerId == null || customerId.trim().isEmpty()) return null;
         if (carType == null || startDate == null || days <= 0) return null;
