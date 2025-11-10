@@ -13,16 +13,15 @@ import com.waszczyk.model.Reservation;
 
 
 public class CarRentalService {
-    // Counters for each car type
-    private final Map<CarType, Integer> carCounts = new HashMap<>();
-    private final Map<CarType, Integer> availableCounts = new HashMap<>();
+    private final Map<CarType, Integer> totalCars = new HashMap<>();
+    private final Map<CarType, Integer> availableCars = new HashMap<>();
     private final List<Reservation> reservations = new ArrayList<>();
     
     public CarRentalService() {
         // Initialize all car types with 0 cars
         for (CarType type : CarType.values()) {
-            carCounts.put(type, 0);
-            availableCounts.put(type, 0);
+            totalCars.put(type, 0);
+            availableCars.put(type, 0);
         }
     }
     
@@ -30,12 +29,12 @@ public class CarRentalService {
      * Add cars of a specific type to the fleet.
      */
     public void addCars(CarType type, int count) {
-        carCounts.put(type, carCounts.get(type) + count);
-        availableCounts.put(type, availableCounts.get(type) + count);
+        totalCars.put(type, totalCars.get(type) + count);
+        availableCars.put(type, availableCars.get(type) + count);
     }
     
     /**
-     * Make a reservation - returns reservation ID if successful, null if failed.
+     * Make a reservation - returns reservation ID if successful.
      * @throws NoCarAvailableException 
      */
     public String makeReservation(String customerId, CarType carType, LocalDate startDate, int days) throws NoCarAvailableException {
@@ -45,7 +44,7 @@ public class CarRentalService {
         if (startDate.isBefore(LocalDate.now())) return null;
         
         // Check if any cars are available
-        if (availableCounts.get(carType) <= 0) {
+        if (availableCars.get(carType) <= 0) {
             throw new NoCarAvailableException("No cars available for type:" + carType);
         }
         
@@ -54,7 +53,7 @@ public class CarRentalService {
         Reservation reservation = new Reservation(reservationId, customerId, carType, startDate, days);
         
         reservations.add(reservation);
-        availableCounts.put(carType, availableCounts.get(carType) - 1);
+        availableCars.put(carType, availableCars.get(carType) - 1);
         
         return reservationId;
     }
@@ -66,8 +65,8 @@ public class CarRentalService {
         for (Reservation reservation : reservations) {
             if (reservation.getId().equals(reservationId) && !reservation.isCancelled()) {
                 reservation.cancel();
-                availableCounts.put(reservation.getCarType(), 
-                    availableCounts.get(reservation.getCarType()) + 1);
+                availableCars.put(reservation.getCarType(), 
+                    availableCars.get(reservation.getCarType()) + 1);
                 return true;
             }
         }
@@ -78,14 +77,14 @@ public class CarRentalService {
      * Get available car count for a type.
      */
     public int getAvailableCount(CarType type) {
-        return availableCounts.get(type);
+        return availableCars.get(type);
     }
     
     /**
      * Get total car count for a type.
      */
     public int getTotalCount(CarType type) {
-        return carCounts.get(type);
+        return totalCars.get(type);
     }
     
     /**
