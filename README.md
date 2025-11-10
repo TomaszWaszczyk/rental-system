@@ -45,7 +45,7 @@ mvn test -Dtest=CarRentalServiceTest
 
 ## Gaps/deficiencies should be known & understood
 
-- Add calendar feature like: `isAvailableForDateRange(CarType.SUV, Dec5, 4) -> boolean"`
+- Add calendar feature like: `isAvailableForDateRange(CarType.SUV, Dec5, 4) -> boolean`
 - Add exceptions handling
 - Better ID generation
 - Add logger
