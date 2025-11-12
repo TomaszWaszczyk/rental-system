@@ -38,8 +38,9 @@ public class CarRentalService {
      * @throws NoCarAvailableException 
      */
     public String makeReservation(String customerId, CarType carType, LocalDate startDate, int days) {
-        // As simple validation as possible
-        if (customerId == null || customerId.trim().isEmpty()) return null;
+        if (customerId == null || customerId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer ID cannot be null or empty");
+        }
         if (carType == null || startDate == null || days <= 0) return null;
         if (startDate.isBefore(LocalDate.now())) return null;
         

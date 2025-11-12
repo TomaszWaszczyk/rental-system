@@ -97,10 +97,12 @@ class CarRentalServiceTest {
     @DisplayName("Should validate input parameters")
     void testInputValidation() {
         // Null customer ID
-        assertNull(service.makeReservation(null, CarType.SEDAN, tomorrow, 3));
+        assertThrows(IllegalArgumentException.class, () -> 
+            service.makeReservation(null, CarType.SEDAN, tomorrow, 3));
         
         // Empty customer ID
-        assertNull(service.makeReservation("", CarType.SEDAN, tomorrow, 3));
+        assertThrows(IllegalArgumentException.class, () -> 
+            service.makeReservation("", CarType.SEDAN, tomorrow, 3));
         
         // Null car type
         assertNull(service.makeReservation("CUST001", null, tomorrow, 3));
