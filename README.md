@@ -49,3 +49,4 @@ mvn test -Dtest=CarRentalServiceTest
 - Add exceptions handling
 - Better ID generation
 - Add logger
+- More verbose code when methods return Optional
